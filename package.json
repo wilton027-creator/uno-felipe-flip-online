@@ -1,0 +1,1 @@
+{"name":"uno-felipe-flip-online","version":"1.0.0","private":true,"scripts":{"start":"node server.js","test":"node --test"},"engines":{"node":">=20"},"dependencies":{"socket.io":"^4.8.1","express":"^4.21.2"}}

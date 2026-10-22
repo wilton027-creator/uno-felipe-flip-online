@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: uno-felipe-flip-online
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
