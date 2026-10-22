@@ -1,8 +1,12 @@
+# Servico de testes independente. Nao altera o servico de producao.
 services:
   - type: web
-    name: uno-felipe-flip-online
+    name: desvendar-jogo-laboratorio
+    repo: https://github.com/wilton027-creator/uno-felipe-flip-online
+    branch: desvendar-laboratorio
     runtime: node
     plan: free
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
+    autoDeployTrigger: commit
