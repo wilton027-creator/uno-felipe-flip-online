@@ -19,7 +19,7 @@ const colorBase=[
 function colorShuffle(values){const list=values.map(x=>({...x}));for(let i=list.length-1;i>0;i--){const j=crypto.randomInt(i+1);[list[i],list[j]]=[list[j],list[i]]}return list}
 function colorBroadcast(r){
   const players=r.players.map(p=>({id:p.id,name:p.name,score:p.score,matched:p.matched}));
-  const msg={type:'colors_state',code:r.code,host:r.host,players,started:r.started,
+  const msg={type:'colors_state',code:r.code,host:r.host,players,started:r.started,maxPlayers:r.maxPlayers,
     winner:r.winner,turn:r.turn,round:r.round,size:r.size,challenge:r.challenge,
     colors:r.colors,lastRoll:r.lastRoll};
   r.players.forEach(p=>send(p.ws,{...msg,you:p.id}));
@@ -48,13 +48,14 @@ function connectColors(socket){
       if(m.type==='create'){
         let code;do{code=crypto.randomBytes(3).toString('hex').toUpperCase()}while(colorRooms.has(code));
         r={code,players:[],host:null,started:false,winner:null,turn:0,round:0,
+          maxPlayers:Number.isInteger(m.maxPlayers)&&m.maxPlayers>=2&&m.maxPlayers<=8?m.maxPlayers:6,
           size:m.size===6?6:5,challenge:[],colors:[],lastRoll:'Aguardando jogadores'};
         colorRooms.set(code,r);
       }else{
         r=colorRooms.get(String(m.code||'').trim().toUpperCase());
         if(!r)return err(socket,'Sala não encontrada. Confira o código.');
         if(r.started)return err(socket,'A partida já começou. Aguarde a próxima rodada.');
-        if(r.players.length>=8)return err(socket,'Sala cheia (máximo de 8 jogadores).');
+        if(r.players.length>=r.maxPlayers)return err(socket,'Sala cheia (máximo de '+r.maxPlayers+' jogadores).');
       }
       if(r.players.some(p=>p.name.toLowerCase()===name.toLowerCase()))return err(socket,'Este nome já está sendo usado na sala');
       const id=crypto.randomUUID();
