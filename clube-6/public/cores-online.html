@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1231">
+<title>Jogo das Cores Online • Desvendar Jogos</title>
+<style>
+:root{--bg:#080f27;--panel:#15264b;--line:#415e92;--gold:#ffdc83;--ink:#f7f8ff}
+*{box-sizing:border-box}
+body{margin:0;font:16px system-ui,-apple-system,Arial,sans-serif;background:radial-gradient(circle at top left,#273e82,var(--bg) 55%);min-height:100vh;color:var(--ink)}
+main{max-width:1120px;margin:auto;padding:18px 14px 50px}
+h1{font-size:clamp(29px,6vw,47px);margin:12px 0}h2{font-size:22px;margin:0 0 12px}h3{margin:0 0 9px}
+p{color:#bcccdf;line-height:1.5}
+a{color:#ffe29b}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.tag{font-size:12px;font-weight:750;color:#ffe29b;background:#2b426d;border-radius:99px;padding:8px 12px}
+.card{border-radius:20px;padding:20px;margin:16px 0;background:linear-gradient(140deg,#182c54,#101a37);border:1px solid var(--line);box-shadow:0 8px 26px #0002}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:11px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hidden{display:none!important}
+button,input,select{font:inherit;border-radius:11px;padding:12px;border:1px solid #5875a4}
+button{background:#ffda82;border-color:#eab95b;color:#1a2342;font-weight:800;cursor:pointer}
+button:disabled{opacity:.44;cursor:not-allowed}
+button.alt{background:#283f6f;border-color:#5b75ac;color:#fff}
+input,select{background:#0c1937;color:white;min-width:0;max-width:100%}
+input#invite{flex:1;min-width:210px}
+input#name{flex:1;min-width:180px}
+input#code{width:150px;text-transform:uppercase}
+label{font-size:14px;color:#c8d9ee}
+.stack{display:flex;flex-direction:column;gap:7px}
+#message{min-height:23px;color:#ffe49a;font-weight:700}
+#playersList{display:flex;flex-wrap:wrap;gap:9px}
+.person{background:#293f69;padding:9px 12px;border-radius:11px;font-size:14px}
+.die{font-size:64px;background:#f7f9ff;color:#1e3060;border-radius:20px;display:grid;place-items:center;width:93px;height:93px;box-shadow:0 7px 0 #91a6d2;margin:auto}
+.dice-area{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.dice-area button{max-width:330px;width:100%}
+.mode-buttons{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.mode-buttons button{width:auto;font-size:14px;padding:9px 12px}
+.physical{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;width:100%;max-width:450px}
+.physical button{padding:13px 4px;font-size:20px}
+.colorbar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.color{border-radius:11px;min-width:0;text-align:center;padding:12px 3px;background:var(--bgcolor);color:var(--textcolor);font-weight:900;font-size:clamp(15px,3vw,26px)}
+.color small{display:block;font-size:10px}
+.target{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tile{width:clamp(42px,8vw,66px);aspect-ratio:1;border-radius:11px;display:grid;place-items:center;background:var(--bgcolor);color:var(--textcolor);font-weight:900;font-size:24px}
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin-top:14px}
+.board{background:#101f40;border:1px solid #39537d;border-radius:16px;padding:14px}
+.board.active{border-color:#ffdf8a;box-shadow:0 0 0 2px #ffdf8a33}
+.board.winner{border-color:#86dd9d}
+.board-head{display:flex;justify-content:space-between;gap:8px;margin-bottom:13px}
+.board-title{font-weight:850}
+.board-score{font-size:14px;color:#ffe49c}
+.cells{display:grid;gap:7px}
+.cell{background:#24395f;border:2px dashed #556d96;border-radius:11px;aspect-ratio:1;display:grid;place-items:center;font-size:clamp(15px,3vw,25px);font-weight:900}
+.cell.filled{border:2px solid #fff6;background:var(--bgcolor);color:var(--textcolor)}
+.bar{background:#273c61;border-radius:50px;height:8px;margin-top:12px;overflow:hidden}
+.bar>div{background:#ffda82;height:100%;border-radius:50px}
+#winner{border:3px solid var(--gold);background:#33436b;border-radius:18px;text-align:center;padding:21px;margin:13px 0;box-shadow:0 14px 32px #0004}
+#winner strong{display:block;font-size:clamp(24px,5vw,37px);color:#ffe6a7}
+#help{font-size:14px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}.card{padding:14px}.physical{grid-template-columns:repeat(3,1fr)}.color small{font-size:8px}.color{padding:9px 0}header .tag{font-size:10px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="tag">🌈 DESVENDAR JOGOS • ONLINE</div><a href="/cores.html">🏠 Jogar no mesmo aparelho</a></header>
+<h1>🎲 Código das Cores <span style="color:#ffda82">Online</span></h1>
+<p>Jogue com amigos de outros celulares ou computadores! Uma sala, um código de convite e até <strong>8 jogadores</strong>. O primeiro a completar suas cores vence.</p>
+
+<section id="entry" class="card">
+<h2>🎮 Criar ou entrar em uma sala</h2>
+<div class="row"><input id="name" aria-label="Seu nome" maxlength="26" placeholder="Seu nome"><input id="code" aria-label="Código da sala" maxlength="6" placeholder="CÓDIGO"><button id="create">✨ Criar sala</button><button id="join" class="alt">Entrar com código</button></div>
+<p id="help">Para criar uma sala, digite seu nome. Para entrar, coloque seu nome e o código que seu amigo enviou.</p>
+</section>
+
+<section id="room" class="hidden">
+<section class="card">
+<div class="row" style="justify-content:space-between"><h2 id="roomTitle">Sala</h2><span id="roomStatus" class="tag">Aguardando</span></div>
+<p>Envie o código ou o link para seus amigos:</p>
+<div class="row"><input id="invite" readonly aria-label="Link de convite"><button id="copy">📋 Copiar convite</button></div>
+<p id="playersLabel">Jogadores na sala</p><div id="playersList"></div>
+</section>
+<div id="winner" class="hidden" aria-live="polite"><strong id="winnerName">🏆 Temos um vencedor!</strong><p id="winnerText"></p></div>
+<section class="card">
+<div class="row" style="justify-content:space-between">
+<div class="stack"><label for="size">Quadradinhos por jogador</label><select id="size"><option value="5">5 quadradinhos</option><option value="6">6 quadradinhos</option></select></div>
+<div class="row"><button id="start">▶ Iniciar partida</button><button id="new" class="alt hidden">🎨 Nova rodada</button><button id="repeat" class="alt hidden">↻ Repetir desafio</button></div>
+</div>
+<p id="hostHint">Aguarde o criador iniciar a partida.</p>
+</section>
+<section class="grid2">
+<div class="card">
+<h2>🌈 Cores desta rodada</h2><div id="palette" class="colorbar"></div>
+<h3 style="margin-top:24px">🏁 Sequência para completar</h3>
+<p>Todos jogam com os mesmos números. Não precisa completar em ordem.</p>
+<div id="target" class="target"></div>
+</div>
+<div class="card dice-area">
+<h2 id="turn">Aguardando partida</h2>
+<div id="die" class="die">🎲</div>
+<div class="mode-buttons"><button id="virtualMode">🎲 Dado virtual</button><button id="physicalMode" class="alt">✋ Dado físico</button></div>
+<button id="roll">🎲 LANÇAR DADO</button>
+<div id="physicalButtons" class="physical hidden" aria-label="Informe o resultado do dado físico"></div>
+<p id="feedback">Aguardando o início da rodada.</p>
+</div>
+</section>
+<section class="card"><h2>🏆 Tabuleiros e placar</h2><div id="boards" class="boards"></div></section>
+</section>
+<p id="message" role="status"></p>
+<footer style="text-align:center;color:#aabedb;padding:20px">© Desvendar Jogos • <a href="/">Clube dos 6 Jogos</a></footer>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+let ws=null,state=null,me=null,mode='virtual',pending=false;
+const q=new URLSearchParams(location.search);
+if(q.get('s'))$('code').value=q.get('s').trim().toUpperCase().slice(0,6);
+function alertMessage(message){$('message').textContent=message}
+function connect(type){
+  const name=$('name').value.trim(),code=$('code').value.trim().toUpperCase();
+  if(!name)return alertMessage('Digite seu nome.');
+  if(type==='join'&&!/^[A-F0-9]{6}$/.test(code))return alertMessage('Digite o código de 6 caracteres.');
+  if(ws&&ws.readyState<=1)ws.close();
+  pending=true;$('create').disabled=$('join').disabled=true;
+  alertMessage('Conectando à sala...');
+  ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/cores-ws');
+  const current=ws;
+  ws.onopen=()=>current.send(JSON.stringify({type,name,code,size:Number($('size').value)}));
+  ws.onmessage=e=>{
+    let m;try{m=JSON.parse(e.data)}catch{return}
+    if(m.error){alertMessage(m.error);pending=false;$('create').disabled=$('join').disabled=false;return}
+    if(m.type!=='colors_state')return;
+    me=m.you;state=m;pending=false;
+    $('entry').classList.add('hidden');$('room').classList.remove('hidden');
+    alertMessage('');render();
+  };
+  ws.onerror=()=>{if(ws===current)alertMessage('Não foi possível conectar. Confira sua internet e tente novamente.')};
+  ws.onclose=()=>{if(ws!==current)return;pending=false;$('create').disabled=$('join').disabled=false;if(state)alertMessage('Conexão interrompida. Atualize a página e entre novamente.');else alertMessage('Não foi possível entrar. Tente novamente.')};
+}
+function send(type,extra={}){
+  if(ws?.readyState!==WebSocket.OPEN)return alertMessage('Sem conexão com a sala.');
+  ws.send(JSON.stringify(Object.assign({type},extra)));
+}
+function tile(value,cls){
+  const c=state.colors[value-1],el=document.createElement('div');
+  el.className=cls;el.style.setProperty('--bgcolor',c.hex);el.style.setProperty('--textcolor',c.ink);el.textContent=value;return el;
+}
+function render(){
+  const s=state,host=s.host===me,meTurn=s.started&&s.players[s.turn]?.id===me;
+  $('roomTitle').textContent='Sala '+s.code;
+  $('roomStatus').textContent=s.started?'🟢 Partida em andamento':s.winner?'🏆 Rodada concluída':'⏳ Aguardando jogadores';
+  $('invite').value=location.origin+'/cores-online.html?s='+encodeURIComponent(s.code);
+  $('playersLabel').textContent=s.players.length+' de 8 jogadores na sala';
+  $('playersList').replaceChildren();
+  s.players.forEach((p,i)=>{const e=document.createElement('span');e.className='person';e.textContent=['🔴','🔵','🟢','🟡','🟣','🟠','⚪','🟤'][i]+' '+p.name+(p.id===s.host?' 👑':'')+(p.id===me?' (você)':'');$('playersList').append(e)});
+  $('winner').classList.toggle('hidden',!s.winner);
+  if(s.winner){$('winnerName').textContent='🏆 '+s.winner.name+' VENCEU!';$('winnerText').textContent='Parabéns! Você completou todas as cores e ganhou uma taça!'}
+  $('size').value=s.size;$('size').disabled=!host||s.started;
+  $('start').classList.toggle('hidden',!host||s.started||s.round>0);
+  $('start').disabled=s.players.length<2;
+  $('new').classList.toggle('hidden',!host||s.started||s.round===0);
+  $('repeat').classList.toggle('hidden',!host||s.started||s.round===0);
+  $('hostHint').textContent=host?(s.players.length<2?'Espere pelo menos mais um jogador.':s.started?'A partida está acontecendo.':'Pronto! Inicie a rodada com seus amigos.'):'Somente o criador da sala pode iniciar uma rodada.';
+  $('palette').replaceChildren();$('target').replaceChildren();
+  if(s.colors?.length===6){
+    s.colors.forEach((c,i)=>{const el=document.createElement('div');el.className='color';el.style.setProperty('--bgcolor',c.hex);el.style.setProperty('--textcolor',c.ink);el.textContent=i+1;const small=document.createElement('small');small.textContent=c.name;el.append(small);$('palette').append(el)});
+    s.challenge.forEach(n=>$('target').append(tile(n,'tile')));
+  }
+  $('turn').textContent=s.winner?'🏆 '+s.winner.name+' venceu!':s.started?'Vez de '+s.players[s.turn].name:(s.round?'Rodada encerrada':'Aguardando partida');
+  const match=/tirou ([1-6])/.exec(s.lastRoll||'');$('die').textContent=match?['','⚀','⚁','⚂','⚃','⚄','⚅'][Number(match[1])]:'🎲';
+  $('feedback').textContent=s.lastRoll||'Aguardando a partida';
+  $('roll').disabled=!meTurn;
+  document.querySelectorAll('#physicalButtons button').forEach(b=>b.disabled=!meTurn);
+  $('virtualMode').className=mode==='virtual'?'':'alt';
+  $('physicalMode').className=mode==='physical'?'':'alt';
+  $('roll').classList.toggle('hidden',mode!=='virtual');
+  $('physicalButtons').classList.toggle('hidden',mode!=='physical');
+  $('boards').replaceChildren();
+  s.players.forEach((p,i)=>{
+    const board=document.createElement('article');board.className='board'+(s.started&&s.turn===i?' active':'')+(s.winner?.id===p.id?' winner':'');
+    const head=document.createElement('div');head.className='board-head';
+    const label=document.createElement('div');label.className='board-title';
+    label.textContent=['🔴','🔵','🟢','🟡','🟣','🟠','⚪','🟤'][i]+' '+p.name+(p.id===me?' (você)':'')+(s.winner?.id===p.id?' 🏆':'');
+    const score=document.createElement('div');score.className='board-score';score.textContent='🏆 '+p.score;
+    head.append(label,score);board.append(head);
+    const cells=document.createElement('div');cells.className='cells';
+    cells.style.gridTemplateColumns='repeat('+s.size+',minmax(0,1fr))';
+    (s.challenge||[]).forEach((n,j)=>{
+      const el=document.createElement('div');el.className='cell'+(p.matched[j]?' filled':'');
+      if(p.matched[j]){const c=s.colors[n-1];el.style.setProperty('--bgcolor',c.hex);el.style.setProperty('--textcolor',c.ink)}
+      el.textContent=p.matched[j]?n:j+1;cells.append(el);
+    });
+    board.append(cells);
+    const progress=document.createElement('div');progress.className='bar';
+    const inner=document.createElement('div');const fraction=p.matched.filter(Boolean).length/(s.size||1);inner.style.width=(100*fraction)+'%';progress.append(inner);board.append(progress);
+    $('boards').append(board);
+  });
+}
+function setMode(which){mode=which;if(state)render();else{$('roll').classList.toggle('hidden',mode!=='virtual');$('physicalButtons').classList.toggle('hidden',mode!=='physical')}}
+$('create').addEventListener('click',()=>connect('create'));
+$('join').addEventListener('click',()=>connect('join'));
+$('start').addEventListener('click',()=>send('start',{size:Number($('size').value)}));
+$('new').addEventListener('click',()=>send('new_round',{size:Number($('size').value)}));
+$('repeat').addEventListener('click',()=>send('repeat_round',{size:Number($('size').value)}));
+$('roll').addEventListener('click',()=>send('roll'));
+$('virtualMode').addEventListener('click',()=>setMode('virtual'));
+$('physicalMode').addEventListener('click',()=>setMode('physical'));
+for(let i=1;i<=6;i++){const b=document.createElement('button');b.textContent=i;b.title='Saiu '+i;b.addEventListener('click',()=>send('physical_roll',{dice:i}));$('physicalButtons').append(b)}
+$('copy').addEventListener('click',async()=>{
+  const link=$('invite').value;
+  try{await navigator.clipboard.writeText('Venha jogar Código das Cores comigo! '+link);alertMessage('Link copiado! Envie pelo WhatsApp.')}
+  catch{$('invite').focus();$('invite').select();alertMessage('Selecione o link e copie para enviar.')}
+});
+})();
+</script>
+</body>
+</html>
