@@ -1,5 +1,5 @@
-const CACHE='desvendar-clube6-offline-v5';
-const ASSETS=['/','/index.html','/cores.html','/jogo-das-cores.html','/cores-online.html','/triangulo-original.html','/velha-corrida-original.html','/trilha-original.html','/estrela-original.html','/chegada-original.html'];
+const CACHE='desvendar-clube6-offline-v6';
+const ASSETS=['/','/index.html','/cores.html','/jogo-das-cores.html','/cores-online.html','/triangulo-original.html','/velha-corrida-original.html','/trilha-original.html','/estrela-original.html','/chegada-original.html','/corrida-do-tesouro.html'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('desvendar-clube6-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{
