@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101b35">
+<meta name="description" content="Corrida do Tesouro: jogo de tabuleiro com dados para 2 a 6 jogadores, no mesmo aparelho.">
+<title>Corrida do Tesouro | Desvendar Jogos</title>
+<style>
+:root{--bg:#0b1630;--panel:#172a4b;--panel2:#213d64;--gold:#ffd46a;--ink:#f5f7ff;--muted:#c2d2e8}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at top,#305486,#101a32 63%,var(--bg));min-height:100vh}
+main{max-width:1180px;padding:14px 14px 50px;margin:auto}
+a{color:#ffe099}h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:10px 0}h2{font-size:1.18rem;margin:4px 0 12px}p{color:var(--muted);margin:8px 0}
+.tag{font-weight:800;letter-spacing:.1em;font-size:12px;color:var(--gold)}
+.panel{border:1px solid #5478aa;background:linear-gradient(140deg,#1b3053,#132442);padding:18px;border-radius:19px;box-shadow:0 12px 34px #0003}
+header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+header p{font-size:14px}header a{font-size:14px}
+.top{display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);gap:14px;align-items:start}
+label{font-weight:700}select,input,button{font:inherit;min-height:44px;border-radius:10px}
+select,input{background:#0a1a32;color:white;border:1px solid #6885ad;padding:8px 10px;max-width:100%}
+button{border:1px solid #f3c86e;background:#ffd46a;color:#142443;font-weight:850;padding:9px 14px;cursor:pointer}
+button.secondary{background:#2b4c71;border-color:#6686b0;color:#fff}
+button:disabled{opacity:.48;cursor:not-allowed}
+.row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0 13px}
+.names input{width:100%;min-width:0}
+.rules{font-size:13px;line-height:1.5}
+.rules strong{color:#ffe198}
+.arena{min-width:0}
+.score{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.chip{background:#28466a;border:1px solid #516b90;border-radius:99px;padding:7px 11px;font-weight:750;font-size:13px}
+.chip.current{border:2px solid var(--gold);box-shadow:0 0 0 2px #ffce6640}
+.status{font-weight:850;font-size:clamp(17px,3vw,23px);color:#ffe39a;margin:9px 0;min-height:30px}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 0}
+.die{font-size:52px;min-width:70px;text-align:center;line-height:1}
+.result{font-weight:750;color:#e5f0ff;min-height:25px}
+.track{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:12px 0}
+.cell{min-height:90px;border-radius:12px;background:linear-gradient(145deg,#345778,#244469);border:1px solid #5a7a9e;padding:7px 6px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.cell .n{font-weight:900;font-size:17px}
+.cell small{color:#e0ecff;font-size:11px;line-height:1.15}
+.cell.plus{background:linear-gradient(145deg,#236853,#154c4a);border-color:#6ad9a7}
+.cell.minus{background:linear-gradient(145deg,#76414b,#542b47);border-color:#df9baf}
+.cell.finish{background:linear-gradient(145deg,#896125,#65411e);border-color:#ffda80}
+.tokens{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.token{border-radius:50%;border:2px solid #ffffffbb;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;width:24px;height:24px;color:#09152c}
+.winner{border:3px solid #ffdc79;background:linear-gradient(120deg,#4c3950,#304c78);padding:18px;text-align:center;border-radius:15px;margin:10px 0;box-shadow:0 0 25px #ffcb6270;animation:pop .35s ease-out}
+.winner strong{font-size:clamp(23px,5vw,32px);color:#ffe18c;display:block}
+.hidden{display:none!important}
+@keyframes pop{from{transform:scale(.94);opacity:.3}to{transform:scale(1);opacity:1}}
+@media(max-width:790px){.top{grid-template-columns:1fr}.cell{min-height:67px;padding:5px}.cell .n{font-size:14px}.cell small{font-size:9px}.track{gap:3px}.token{width:18px;height:18px;font-size:10px}}
+@media(max-width:400px){.cell{min-height:57px}.names{grid-template-columns:1fr 1fr}.track{gap:2px}.cell small{font-size:8px}}
+</style>
+</head>
+<body>
+<main>
+<header><div><span class="tag">🎲 DESVENDAR • NOVO JOGO • ESTILO CLÁSSICO</span><h1>🏆 Corrida do Tesouro</h1><p>De 2 a 6 jogadores • Mesmo celular ou computador • Dado real ou virtual</p></div><a href="/">← Voltar ao Clube dos Jogos</a></header>
+<div class="top">
+<section class="panel" aria-label="Configurar partida">
+<h2>⚙️ Preparar jogadores</h2>
+<div class="row"><label for="qty">Quantidade:</label><select id="qty"><option value="2">2 jogadores</option><option value="3">3 jogadores</option><option value="4">4 jogadores</option><option value="5">5 jogadores</option><option value="6">6 jogadores</option></select></div>
+<div id="names" class="names"></div>
+<div class="row"><button id="start">▶ Começar partida</button><button id="new" class="secondary">↻ Nova rodada</button></div>
+<div class="row"><button id="clear" class="secondary">🧹 Zerar troféus</button></div>
+<h2>📖 Como jogar</h2>
+<p class="rules">Cada jogador lança o dado na sua vez e avança pelas casas. <strong>Casas verdes ⭐</strong> fazem avançar; <strong>casas vermelhas ↩</strong> fazem voltar. O primeiro a alcançar a <strong>casa 48</strong> ganha um troféu! 🏆</p>
+<p class="rules">Você pode usar o dado da tela ou jogar com um dado de verdade e informar o resultado. Todos jogam no mesmo aparelho, passando a vez.</p>
+<p class="rules">O placar fica guardado neste navegador. Trocar os nomes ao começar outra partida reinicia o placar.</p>
+</section>
+<section class="arena">
+<div class="panel">
+<h2>🎯 Campeonato</h2><div id="scores" class="score" aria-live="polite"></div>
+<div id="status" class="status" role="status">Escolha os jogadores e comece!</div>
+<div id="winner" class="winner hidden" role="status" aria-live="assertive"><strong id="winnerTitle"></strong><p id="winnerText"></p></div>
+<div class="actions"><button id="roll" disabled>🎲 Lançar dado virtual</button><button id="physical" class="secondary" disabled>✋ Usar dado físico</button><span id="die" class="die" aria-label="Dado">🎲</span></div>
+<div id="physicalBox" class="row hidden"><label for="dieNum">Número obtido:</label><select id="dieNum"><option value="">Escolha</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select><button id="confirm">Confirmar jogada</button></div>
+<div id="result" class="result" aria-live="polite">Tabuleiro com 48 casas.</div>
+</div>
+<section class="panel" style="margin-top:12px"><h2>🗺️ Trilha do Tesouro</h2><p>🏁 Saída: casa 0 &nbsp; • &nbsp; 🏆 Chegada: casa 48</p><div id="track" class="track" aria-label="Tabuleiro com 48 casas"></div></section>
+</section>
+</div>
+</main>
+<script>
+(function(){
+'use strict';
+const END=48;
+const bonuses={5:3,12:-2,19:4,27:-3,33:3,40:-4,44:2};
+const colors=['#ffe08a','#8ed2ff','#ffa4b5','#99e1a3','#d1abfa','#ffc48d'];
+const faces=['','⚀','⚁','⚂','⚃','⚄','⚅'];
+const $=id=>document.getElementById(id);
+const safeName=s=>String(s||'').trim().slice(0,24);
+const storageKey='desvendar-corrida-tesouro-v1';
+let players=[],turn=0,running=false,winner=-1,lastRoll=0,lastMessage='';
+function save(){try{localStorage.setItem(storageKey,JSON.stringify({players,turn,running,winner,lastRoll,lastMessage}))}catch(e){}}
+function countNames(){const total=Number($('qty').value);let previous=Array.from($('names').querySelectorAll('input'),x=>x.value);$('names').replaceChildren();for(let i=0;i<total;i++){const input=document.createElement('input');input.type='text';input.maxLength=24;input.placeholder='Jogador '+(i+1);input.setAttribute('aria-label','Nome do jogador '+(i+1));input.value=previous[i]||'Jogador '+(i+1);$('names').append(input)}}
+function roster(){return Array.from($('names').querySelectorAll('input'),(x,i)=>safeName(x.value)||'Jogador '+(i+1))}
+function begin(keepScores){const names=roster();const same=keepScores&&names.length===players.length&&names.every((name,i)=>name===players[i].name);players=names.map((name,i)=>({name,pos:0,wins:same?(players[i].wins||0):0}));turn=0;running=true;winner=-1;lastRoll=0;lastMessage='A partida começou!';$('physicalBox').classList.add('hidden');save();draw()}
+function throwDie(n){if(!running||winner!==-1||!Number.isInteger(n)||n<1||n>6)return;let p=players[turn],from=p.pos,landing=Math.min(END,from+n),extra=landing===END?0:(bonuses[landing]||0),target=Math.max(0,Math.min(END,landing+extra));p.pos=target;lastRoll=n;let note=extra?(extra>0?' ⭐ Avançou mais '+extra+' casas!':' ↩ Voltou '+Math.abs(extra)+' casas!'):'';lastMessage=p.name+' tirou '+n+' e foi da casa '+from+' para a '+target+'.'+note;if(target>=END){winner=turn;running=false;p.wins=(p.wins||0)+1;lastMessage+=' 🏆 '+p.name+' venceu!'}else turn=(turn+1)%players.length;save();draw()}
+function draw(){const ready=running&&winner===-1;$('roll').disabled=!ready;$('physical').disabled=!ready;if(!ready)$('physicalBox').classList.add('hidden');$('status').textContent=winner>=0?'🏆 '+players[winner].name+' é o campeão!':ready?'🎲 Vez de '+players[turn].name:'Escolha os jogadores e comece!';$('winner').classList.toggle('hidden',winner<0);if(winner>=0){$('winnerTitle').textContent='🏆 '+players[winner].name+' VENCEU!';$('winnerText').textContent='Parabéns! Você chegou ao tesouro. Clique em Nova rodada para jogar novamente.'}$('result').textContent=lastMessage||'Clique em Começar partida para jogar.';$('die').textContent=faces[lastRoll]||'🎲';
+const scoreboard=$('scores');scoreboard.replaceChildren();players.forEach((p,i)=>{const s=document.createElement('span');s.className='chip'+(ready&&i===turn?' current':'');s.textContent=(i+1)+'. '+p.name+' • 🏆 '+p.wins+' • Casa '+p.pos;s.style.borderLeft='5px solid '+colors[i];scoreboard.appendChild(s)});
+const track=$('track');track.replaceChildren();for(let j=0;j<48;j++){const row=Math.floor(j/8),col=j%8,num=row%2===0?row*8+col+1:row*8+(8-col);const change=bonuses[num]||0;const box=document.createElement('div');box.className='cell '+(num===48?'finish':change>0?'plus':change<0?'minus':'');box.setAttribute('aria-label','Casa '+num);const label=document.createElement('span');label.className='n';label.textContent=num===48?'🏆 48':String(num);box.appendChild(label);if(change){const small=document.createElement('small');small.textContent=change>0?'⭐ +'+change:'↩ '+change;box.appendChild(small)}const tokens=document.createElement('div');tokens.className='tokens';players.forEach((p,i)=>{if(p.pos===num){const t=document.createElement('span');t.className='token';t.textContent=i+1;t.title=p.name;t.style.backgroundColor=colors[i];tokens.appendChild(t)}});box.appendChild(tokens);track.appendChild(box)}
+}
+$('qty').addEventListener('change',countNames);
+$('start').addEventListener('click',()=>begin(false));
+$('new').addEventListener('click',()=>begin(true));
+$('roll').addEventListener('click',()=>throwDie(Math.floor(Math.random()*6)+1));
+$('physical').addEventListener('click',()=>$('physicalBox').classList.toggle('hidden'));
+$('confirm').addEventListener('click',()=>{const n=Number($('dieNum').value);if(n<1||n>6||!Number.isInteger(n)){$('result').textContent='Escolha um resultado de 1 a 6.';return}throwDie(n);$('dieNum').value='';$('physicalBox').classList.add('hidden')});
+$('clear').addEventListener('click',()=>{players.forEach(p=>p.wins=0);save();draw()});
+countNames();try{const old=JSON.parse(localStorage.getItem(storageKey)||'null');if(old&&Array.isArray(old.players)&&old.players.length>=2&&old.players.length<=6&&old.players.every(p=>typeof p.name==='string'&&Number.isInteger(p.pos)&&p.pos>=0&&p.pos<=48)){players=old.players.map(p=>({name:safeName(p.name),pos:p.pos,wins:Math.max(0,Number(p.wins)||0)}));turn=Number.isInteger(old.turn)&&old.turn>=0&&old.turn<players.length?old.turn:0;winner=Number.isInteger(old.winner)&&old.winner>=0&&old.winner<players.length?old.winner:-1;running=Boolean(old.running)&&winner<0;lastRoll=old.lastRoll>=1&&old.lastRoll<=6?old.lastRoll:0;lastMessage=String(old.lastMessage||'Partida recuperada.').slice(0,200);$('qty').value=String(players.length);countNames();Array.from($('names').querySelectorAll('input')).forEach((x,i)=>x.value=players[i].name)}}catch(e){}
+draw();
+})();
+</script></body></html>
